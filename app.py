@@ -10,9 +10,6 @@ credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realp
                                                                "https://www.googleapis.com/auth/spreadsheets",
                                                                "https://www.googleapis.com/auth/drive.file",
                                                                "https://www.googleapis.com/auth/drive"])
-client = gspread.authorize(credential)
-current_members = client.open("Current Member Bios").sheet1
-alumni = client.open("Alumni Bios").sheet1
 
 app = Flask(__name__)
 CORS(app)
@@ -40,15 +37,20 @@ def all_responses():
     return "Huh"
 
 
-@app.route('/Alumni', methods=["GET", "POST"])
+@app.route('/alumni', methods=["GET", "POST"])
 def alumni():
+    client = gspread.authorize(credential)
+    alumni = client.open("Alumni Bios").sheet1
     if request.method == "POST":
         return jsonify(alumni.get_all_records())
     else:
         return "Huh"
 
-@app.route('/Members', methods=["GET", "POST"])
+
+@app.route('/members', methods=["GET", "POST"])
 def members():
+    client = gspread.authorize(credential)
+    current_members = client.open("Current Member Bios").sheet1
     if request.method == "POST":
         return jsonify(current_members.get_all_records())
     else:
