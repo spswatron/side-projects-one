@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ursa-website",
+  "private_key_id": "bfe18fedbda6522c6eabd5fd4281db8a2cac9f21",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDUEsQAXMxF1YXC\nAtL94r7zGVLwTrzvufxjTLBP5nreG34ybHuSjfqqStkvThPRWzJM92gyf/chresY\nhYwj0ZO+eKMAWiIROjbCOusyPd/o1nIDXEEMgYGJp8M6SJ47bgP5/OdkicFPXID0\nBLYipDMT7uRCe0a3x7veS7dZ2atnul0dZa2N952e2weAZ83lv3DPba9ORTLOikO/\nChLfHEiObiwbEOr2rV78N6A6pADzlAEOBxbBwTFmJJlAFQwhjjFoZr1OVfFHeCyc\nppCIquSWnh8s9T3HRZhZOfmWY+5S1QvVS4k48wa8PyU60L2QXNlbnKBc4cjVN8fZ\nG/T3i+UfAgMBAAECggEAUgNZ0iwRAVa0ThWqg+2q27do6C8DCRBbZwlyy8t9q6Rl\nNtnWJhSLIk0k1ZLzvgxvFO2+2Xy8VUV9e/O1gOqdINVlcA7rSs9A+vcvGrRsAY7g\n86S7MTtqHZKHwOPxcVk353bjA3H0lJzY78VcrGPkruo9Uup6rDrtT+fnJbO0gj2P\nWzmBbiPDJGGgKzyabUaRIFqjzojfyMU2qxW+yuSnUfjMfwYc3rbmUXgv+OjM5i7A\nYnErAyKpM6/PeQFuBzE1nLNrZkFi5kMSGtrL7qRjtJV40sZ6+ACXGbZ0e5Wgkg0Q\nwBkeGWRNaRmOzLbUUqTGBZ2LxR+0/P/ujbrWPtB39QKBgQDvCwLd0wRLACpcyFXF\neNSaJYeaAc6qlMfzPW+qd3dIUODuVBePuOlJMqsInWfRznocK5UoiChvnfoQ7aKO\nsg+52iWIrtHSatd3rNC1W0L24i03R/x7IDqp3fIFFMM+4OEpGZLPTPUZnAO/3CCW\n9Nh8iSZvDXwsguBH5D/GtvIwwwKBgQDjHfz37MvJClOiAirQSATmTO7qK+gBp/bG\nDnW3xo/5VIjwTknYhfvpdhIrxuc6aZ0JiyIS8s74O1sM1iHqXIb/xrAH2C3DGXmw\nTm993JTB6b3A9VZGuIWE3pYtyaPqgLVmJfK2iG3gJG3hfvlZ2/lxyEyx0OUEHZDc\nnqQCo/w0dQKBgEsXD2h1QBT7UVNiDyeAJHDjtywWwz/sir8LHofTDWJnHbFgMyKP\nuKCozPdg0tsiXFN7EVjxJJqjaolkzLq8jpoYP9Am8nyB2XubithdebSqKgACmfpn\njmYL9VnJQuf+plxNz0NVbm0ECF19nbMt6M9+GdeqycYFusR6m9olYAEXAoGAc3Z9\ncvWZrL1pQ0Xiyjyy8PpPxBFKQ/1GQe57/lAeRd2qOLE0bbXAGjKCjmryhwnGYmGv\nkv6KJjzWzzHV0DX2E/bI61QF/9flu7JEkDIiFmtkosKXeCC7EI+wvdpzUPbaQfIs\n8ItvgLJEgo1w6zQgHq57/zJ6G5uEWAT20LjZsTkCgYBNEuDMViXXBReVaCe/rUwU\nWqBhWPTbFIKDaXVtgxF1Tr5hxL0VNz8ALXC81IPaYxw16Sq2chmrc/jeuhuTf+kG\nqxBZ13cK43vQ3TibuUfX4fmUObH5oF/Ahgm0I2pPeHciZgRoVFBi646MLCgszqHG\nN4kMWs7vAEZHM8h5YjD7Dg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "ursa-minor@ursa-website.iam.gserviceaccount.com",
+  "client_id": "113768617149642231927",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ursa-minor%40ursa-website.iam.gserviceaccount.com"
+}
