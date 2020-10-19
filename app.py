@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, jsonify
+from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail, Message
 from os.path import join, dirname, realpath
@@ -16,9 +16,10 @@ CORS(app)
 mail= Mail(app)
 
 
-def send_email():
-    msg = Message('Hello', sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
-    msg.body = "Hi there good job for figuring out how this technology works"
+def send_email(email, subject, name, message):
+    msg = Message(subject, sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
+    msg.html = render_template("PersonalMessageEmailTemplate/Code/index.html", name=name,
+                               email=email, subject = subject, message = message)
     mail.send(msg)
     return "Sent"
 
@@ -63,19 +64,15 @@ def submit_form():
     print('lsdfdkafdf')
     print(request)
     if request.method == 'POST':
-        msg = Message('Hello', sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
         response = request.get_json()
-        msg.body = 'name: ' + response['name'] + '\n' + \
-                   'email: ' + response['email'] + '\n' + \
-                   'message: ' + response['message']
-        mail.send(msg)
+        send_email(response['email'], "Ursas Website Contact", response['name'], response['message'])
         return 'Sent'
     return "Not Post"
 
 
 @app.route("/send_mail", methods=['GET', 'POST'])
 def index():
-    send_email()
+    send_email("ashley_e_chang@brown.edu", "tester", "Ashley", "this is the message. have fun buddy.")
     return "Sent"
 
 
