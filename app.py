@@ -66,9 +66,9 @@ def all_responses():
 
 @app.route('/alumni', methods=["GET", "POST"])
 def alumni():
-    client = gspread.authorize(credential)
-    alumni = client.open("Alumni Bios").sheet1
     if request.method == "POST":
+        client = gspread.authorize(credential)
+        alumni = client.open("Alumni Bios").sheet1
         return jsonify(alumni.get_all_records())
     else:
         return "Huh"
@@ -76,9 +76,9 @@ def alumni():
 
 @app.route('/members', methods=["GET", "POST"])
 def members():
-    client = gspread.authorize(credential)
-    current_members = client.open("Current Member Bios").sheet1
     if request.method == "POST":
+        client = gspread.authorize(credential)
+        current_members = client.open("Current Member Bios").sheet1
         return jsonify(current_members.get_all_records())
     else:
         return "Huh"
