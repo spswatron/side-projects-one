@@ -101,17 +101,6 @@ def submit_form():
     return "Not Post"
 
 
-@app.route('/submit_form', methods=["POST"])
-def submit_form():
-    print('lsdfdkafdf')
-    print(request)
-    if request.method == 'POST':
-        response = request.get_json()
-        send_personal_email(response['email'], "Ursa Website Contact", response['name'], response['message'])
-        return 'Sent'
-    return "Not Post"
-
-
 @app.route('/submit_personal_form', methods=["POST"])
 def submit_form():
     print(request)
