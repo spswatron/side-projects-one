@@ -102,7 +102,7 @@ def submit_form():
 
 
 @app.route('/submit_personal_form', methods=["POST"])
-def submit_form():
+def submit_personal_form():
     print(request)
     if request.method == 'POST':
         response = request.get_json()
