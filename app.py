@@ -1,23 +1,49 @@
-from flask import Flask, request, render_template, jsonify
-from flask_cors import CORS, cross_origin
+from flask import *
+from flask_cors import CORS
 from flask_mail import Mail, Message
+from flask import Flask
 from os.path import join, dirname, realpath
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from dataclasses import dataclass
+
 
 credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)), 'ursas.json'),
                                                               ["https://spreadsheets.google.com/feeds",
                                                                "https://www.googleapis.com/auth/spreadsheets",
                                                                "https://www.googleapis.com/auth/drive.file",
-                                                               "https://www.googleapis.com/auth/drive"])
+                                                             "https://www.googleapis.com/auth/drive"])
 
 app = Flask(__name__)
 CORS(app)
 mail= Mail(app)
 
 
+#database names: alumni, current_members
+
+@dataclass
+class Email:
+    """Class for keeping track of details for email."""
+    header: str
+    name: str
+    e_address: str
+    subject: str
+    message: str
+
+    def total_cost(self) -> float:
+        return self.unit_price * self.quantity_on_hand
+
+
 def send_email(email, subject, name, message):
     msg = Message(subject, sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
+    msg.html = render_template("PersonalMessageEmailTemplate/Code/index.html", name=name,
+                               email=email, subject = subject, message = message)
+    mail.send(msg)
+    return "Sent"
+
+
+def send_personal_email(email, subject, name, message):
+    msg = Message("Personal Website", sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
     msg.html = render_template("PersonalMessageEmailTemplate/Code/index.html", name=name,
                                email=email, subject = subject, message = message)
     mail.send(msg)
@@ -58,6 +84,10 @@ def members():
         return "Huh"
 
 
+@app.route('/update_db', methods=["GET", "POST"])
+def update_db():
+    return "a"
+
 
 @app.route('/submit_form', methods=["POST"])
 def submit_form():
@@ -66,6 +96,28 @@ def submit_form():
     if request.method == 'POST':
         response = request.get_json()
         send_email(response['email'], "Ursas Website Contact", response['name'], response['message'])
+
+        return 'Sent'
+    return "Not Post"
+
+
+@app.route('/submit_form', methods=["POST"])
+def submit_form():
+    print('lsdfdkafdf')
+    print(request)
+    if request.method == 'POST':
+        response = request.get_json()
+        send_personal_email(response['email'], "Ursa Website Contact", response['name'], response['message'])
+        return 'Sent'
+    return "Not Post"
+
+
+@app.route('/submit_personal_form', methods=["POST"])
+def submit_form():
+    print(request)
+    if request.method == 'POST':
+        response = request.get_json()
+        send_personal_email(response['email'], response['subject'], response['name'], response['message'])
         return 'Sent'
     return "Not Post"
 
