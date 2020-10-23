@@ -45,7 +45,7 @@ def send_email(email, subject, name, message):
 def send_personal_email(email, subject, name, message):
     msg = Message(subject, sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
     msg.html = render_template("PersonalMessageEmailTemplate/Code/index.html", name=name,
-                               email = email, subject = subject, message = "Personal Website Contact Form Response: <br />" + message)
+                               email = email, subject = subject, message = Markup("Personal Website Contact Form Response: <br>" + message))
     mail.send(msg)
     return "Sent"
 
