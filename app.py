@@ -6,6 +6,8 @@ from os.path import join, dirname, realpath
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from dataclasses import dataclass
+from random_genre import random_genre
+import json
 
 
 credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)), 'ursas.json'),
@@ -17,6 +19,7 @@ credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realp
 app = Flask(__name__)
 CORS(app)
 mail= Mail(app)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 #database names: alumni, current_members
@@ -96,7 +99,6 @@ def submit_form():
     if request.method == 'POST':
         response = request.get_json()
         send_email(response['email'], "Ursas Website Contact", response['name'], response['message'])
-
         return 'Sent'
     return "Not Post"
 
@@ -113,8 +115,12 @@ def submit_personal_form():
 
 @app.route("/send_mail", methods=['GET', 'POST'])
 def index():
-    send_email("ashley_e_chang@brown.edu", "tester", "Ashley", "this is the message. have fun buddy.")
     return "Sent"
+
+
+@app.route("/random_genre", methods=['GET', 'POST'])
+def r_genre():
+    return random_genre()
 
 
 if __name__ == '__main__':
