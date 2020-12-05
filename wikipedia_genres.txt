@@ -111,7 +111,6 @@ Social science fiction
 Soft science fiction
 Space opera
 portal fantasy aka Isekai and Accidental travel
-Speculative cross-genre fiction
 Bizarro fiction
 Climate fiction (cli-fi)
 Dying Earth
@@ -147,7 +146,6 @@ Romance novel
 Yaoi
 Yuri
 Workplace tell-all
-General cross-genre
 Historical romance
 Juvenile fantasy
 LGBT pulp fiction
@@ -157,9 +155,6 @@ Lesbian erotica fiction
 Paranormal romance
 Romantic fantasy
 Tragicomedy
-Nonfiction genres
-These are genres belonging to the realm of nonfiction. Some genres listed may reappear throughout the list, indicating cross-genre status.
-
 Biography
 Memoir
 Autobiography
