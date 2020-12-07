@@ -5,7 +5,6 @@ from flask import Flask
 from os.path import join, dirname, realpath
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from dataclasses import dataclass
 from random_genre import random_genre
 import json
 
@@ -20,21 +19,6 @@ app = Flask(__name__)
 CORS(app)
 mail= Mail(app)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-
-
-#database names: alumni, current_members
-
-@dataclass
-class Email:
-    """Class for keeping track of details for email."""
-    header: str
-    name: str
-    e_address: str
-    subject: str
-    message: str
-
-    def total_cost(self) -> float:
-        return self.unit_price * self.quantity_on_hand
 
 
 def send_email(email, subject, name, message):
@@ -125,3 +109,4 @@ def r_genre():
 
 if __name__ == '__main__':
    app.run(debug = True)
+

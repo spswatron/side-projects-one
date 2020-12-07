@@ -10,4 +10,4 @@ heroku:
 	git push heroku master
 
 flask:
-	 /Users/ashleychang/PycharmProjects/ursa-flask-back/venv/bin/python -m flask run
+	 /Users/ashleychang/PycharmProjects/flaskServer/venv/bin/python -m flask run
