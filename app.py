@@ -48,7 +48,7 @@ mail = Mail(app)
 
 @app.route('/', methods=["GET", "POST"])
 def all_responses():
-    return "Huh"
+    return redirect("https://www.ashley-chang.me/index")
 
 
 @app.route('/alumni', methods=["GET", "POST"])
