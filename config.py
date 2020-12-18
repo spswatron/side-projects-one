@@ -9,6 +9,8 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
+    WHOOSH_BASE = os.path.join(basedir, 'search.db')
+    MAX_SEARCH_RESULTS = 50
     SECRET_KEY = '234lk341k43jlk324jkl;lkj34'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 

@@ -124,6 +124,13 @@ def modify_post(number):
         return to_change.json()
 
 
+@blog.route("/blog/search", methods=['POST'])
+def blog_search():
+    if request.method == 'POST':
+        matches = Post.query.whoosh_search(request.json['query']).all()
+        return {'matches': matches}
+
+
 @blog.route("/html_new_post", methods=['POST'])
 @flask_praetorian.auth_required
 def html_new_post():

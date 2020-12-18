@@ -1,9 +1,11 @@
-from __init__ import db
+from __init__ import db, app
 from datetime import datetime
+import flask_whooshalchemy as whooshalchemy
 
 
 class Post(db.Model):
     __tablename__ = 'posts'
+    __searchable__ = ['title', 'content']
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
@@ -34,6 +36,9 @@ class Post(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+whooshalchemy.whoosh_index(app, Post)
 
 
 class User(db.Model):
