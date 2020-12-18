@@ -1,4 +1,4 @@
-from __init__ import guard, mail, app, db
+from __init__ import guard, app, db
 from models import User
 from blog.blog import blog
 from side_projects_one.side_projects_one import side_project_one
