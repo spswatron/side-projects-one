@@ -1,10 +1,12 @@
-from flask import *
-from app import *
-from models import User, Post
+from flask import request, Blueprint
+from __init__ import db, guard, InvalidUsage
+from models import Post
 import flask_praetorian
 from bs4 import BeautifulSoup as bs
 import mammoth
 import string
+
+blog = Blueprint('blogger', __name__, template_folder='templates')
 
 
 def convert_title(title):
@@ -12,7 +14,7 @@ def convert_title(title):
         .replace(" ", "_").replace("'", "").replace('"', "").lower()
 
 
-@app.route("/all_posts", methods=['GET', 'POST'])
+@blog.route("/all_posts", methods=['GET', 'POST'])
 @flask_praetorian.auth_required
 def all_posts():
     posts = db.session.query(Post).all()
@@ -20,7 +22,7 @@ def all_posts():
     return {'posts': posts}
 
 
-@app.route('/cms/login', methods=['POST'])
+@blog.route('/cms/login', methods=['POST'])
 def cms_login():
     """
     Logs a user in by parsing a POST request containing user credentials and
@@ -34,7 +36,7 @@ def cms_login():
     return ret, 200
 
 
-@app.route('/cms/auth_check', methods=['GET'])
+@blog.route('/cms/auth_check', methods=['GET'])
 @flask_praetorian.auth_required
 def auth_check():
     """
@@ -44,7 +46,7 @@ def auth_check():
     return {'result': 'success'}
 
 
-@app.route('/cms/refresh', methods=['POST'])
+@blog.route('/cms/refresh', methods=['POST'])
 def refresh():
     """
     Refreshes an existing JWT by creating a new one that is a copy of the old
@@ -59,7 +61,7 @@ def refresh():
     return ret, 200
 
 
-@app.route("/all_show_posts", methods=['GET', 'POST'])
+@blog.route("/all_show_posts", methods=['GET', 'POST'])
 def all_show_posts():
     posts = db.session.query(Post).all()
     posts = sorted(list(map(lambda s: s.json(), posts)), key=lambda s: s['id'], reverse=True)
@@ -73,7 +75,7 @@ def post_list():
     return posts
 
 
-@app.route("/delete_post/<number>", methods=['POST', 'DELETE'])
+@blog.route("/delete_post/<number>", methods=['POST', 'DELETE'])
 @flask_praetorian.auth_required
 def delete_post(number):
     if request.method == 'POST':
@@ -87,7 +89,7 @@ def delete_post(number):
         return {'posts': post_list()}
 
 
-@app.route("/get_post/<url>", methods=['POST', 'DELETE'])
+@blog.route("/get_post/<url>", methods=['POST', 'DELETE'])
 def get_post(url):
     if request.method == 'POST':
         posts = db.session.query(Post).all()
@@ -98,7 +100,7 @@ def get_post(url):
             return {}
 
 
-@app.route("/get_demo_post/<url>", methods=['POST', 'DELETE'])
+@blog.route("/get_demo_post/<url>", methods=['POST', 'DELETE'])
 @flask_praetorian.auth_required
 def get_demo_post(url):
     if request.method == 'POST':
@@ -110,7 +112,7 @@ def get_demo_post(url):
             return {}
 
 
-@app.route("/modify_post/<number>", methods=['POST', 'DELETE'])
+@blog.route("/modify_post/<number>", methods=['POST', 'DELETE'])
 @flask_praetorian.auth_required
 def modify_post(number):
     if request.method == 'POST':
@@ -122,7 +124,7 @@ def modify_post(number):
         return to_change.json()
 
 
-@app.route("/html_new_post", methods=['POST'])
+@blog.route("/html_new_post", methods=['POST'])
 @flask_praetorian.auth_required
 def html_new_post():
     if request.method == 'POST':
@@ -140,7 +142,7 @@ def html_new_post():
         raise InvalidUsage('A post with this title already exists. Try another one?', status_code=410)
 
 
-@app.route("/doc_to_html", methods=['GET', 'POST'])
+@blog.route("/doc_to_html", methods=['GET', 'POST'])
 @flask_praetorian.auth_required
 def doc_to_pdf():
     if request.method == 'POST':
