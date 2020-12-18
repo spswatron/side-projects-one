@@ -34,7 +34,6 @@ app.config['JWT_REFRESH_LIFESPAN'] = {'days': 30}
 
 db = SQLAlchemy(app)
 guard = flask_praetorian.Praetorian()
-
 from models import Post, User
 
 class InvalidUsage(Exception):
