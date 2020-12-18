@@ -5,17 +5,36 @@
     <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="1">
+          <list size="2">
             <item index="0" class="java.lang.String" itemvalue="url_for(" />
+            <item index="1" class="java.lang.String" itemvalue="date-is" />
           </list>
         </value>
       </option>
       <option name="myCustomValuesEnabled" value="true" />
     </inspection_tool>
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="9">
+            <item index="0" class="java.lang.String" itemvalue="django-oauth2-provider" />
+            <item index="1" class="java.lang.String" itemvalue="django-cors-middleware" />
+            <item index="2" class="java.lang.String" itemvalue="six" />
+            <item index="3" class="java.lang.String" itemvalue="cffi" />
+            <item index="4" class="java.lang.String" itemvalue="cryptography" />
+            <item index="5" class="java.lang.String" itemvalue="shortuuid" />
+            <item index="6" class="java.lang.String" itemvalue="pycparser" />
+            <item index="7" class="java.lang.String" itemvalue="pytz" />
+            <item index="8" class="java.lang.String" itemvalue="urllib3" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
     <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredIdentifiers">
         <list>
           <option value="api.app.flask_mail" />
+          <option value="sageboard.urls.dj_rest_auth" />
         </list>
       </option>
     </inspection_tool>
