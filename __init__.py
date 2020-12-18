@@ -35,9 +35,8 @@ app.config['MAIL_USERNAME'] = 'ursaminorsweb@gmail.com'
 app.config['MAIL_PASSWORD'] = 'hiygxhofxbpcabxq'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 guard = flask_praetorian.Praetorian()
-db.init_app(app)
 
 
 class InvalidUsage(Exception):
