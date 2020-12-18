@@ -148,23 +148,6 @@ def r_genre():
     return random_genre()
 
 
-<<<<<<< HEAD
-if __name__ == '__main__':
-   app.run(host='0.0.0.0')
-=======
-def doc_to_html_message(response, soup):
-    msg = Message("file upload", sender='ursaminorsweb@gmail.com', recipients=['spswatron@gmail.com'])
-    response.save(response.filename)
-    with app.open_resource(response.filename) as fp:
-        msg.attach(response.filename, response.content_type, fp.read())
-    html_name = response.filename.split('.')[0] + '.txt'
-    msg.attach(response.filename, response.content_type, fp.read())
-    msg.attach(html_name, 'text/txt', soup.prettify())
-    mail.send(msg)
-    os.remove(response.filename)
->>>>>>> 2961b47bc78a31774d9e551f79f77f13b927ad0c
-
-
 from blog import *
 
 
