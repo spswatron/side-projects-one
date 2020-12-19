@@ -130,9 +130,20 @@ def blog_search():
     if request.method == 'POST':
         query = db.session.query(Post)
         query = search(query, request.json['query']).all()
-        return {'matches': list(map(lambda x: x.json(), query)), 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
+        matches = list(map(lambda x: x.json(), query))
+        showable_matches = list(filter(lambda x: x.show, matches))
+        return {'matches': showable_matches, 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
         # return{'everything': list(map(lambda x: x.json(), db.session.query(Post).all()))}
         # return Post.query.search(unicode(request.json['query'], "utf-8")).limit(5).all()
+
+
+@blog.route("/blog/search_all", methods=['POST'])
+def blog_search():
+    if request.method == 'POST':
+        query = db.session.query(Post)
+        query = search(query, request.json['query']).all()
+        matches = list(map(lambda x: x.json(), query))
+        return {'matches': matches, 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
 
 
 @blog.route("/html_new_post", methods=['POST'])
