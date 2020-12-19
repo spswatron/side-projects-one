@@ -1,5 +1,4 @@
 from flask import request, Blueprint
-from numpy import unicode
 from sqlalchemy_searchable import search
 from __init__ import db, guard, InvalidUsage
 from models import Post
@@ -146,7 +145,7 @@ def html_new_post():
                                  db.session.query(Post).all()))
         html = request.json['html']
         if len(same_url) == 0:
-            new_post = Post(url=unicode(url, "utf-8"), title=unicode(title, "utf-8"), content=unicode(html, "utf-8"))
+            new_post = Post(url=url, title=title, content=html)
             new_post.save()
             return {'html': html,
                     'id': new_post.id,
@@ -163,10 +162,10 @@ def doc_to_pdf():
         html = bs(result.value, 'html.parser').prettify()
         title = response.filename.split(".")[0]
         url = convert_title(title)
-        same_url = list(filter(lambda x: x.url == convert_title(unicode(title, "utf-8")),
+        same_url = list(filter(lambda x: x.url == convert_title(title),
                                  db.session.query(Post).all()))
         if len(same_url) == 0:
-            new_post = Post(url=unicode(url, "utf-8"), title=unicode(title, "utf-8"), content=unicode(html, "utf-8"))
+            new_post = Post(url=url, title=title, content=html)
             new_post.save()
             return_post = new_post
         else:
