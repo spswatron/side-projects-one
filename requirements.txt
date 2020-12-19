@@ -42,6 +42,8 @@ httplib2==0.18.1
 idna==2.10
 inflection==0.3.1
 iniconfig==1.1.1
+ipython==7.19.0
+ipython-genutils==0.2.0
 itsdangerous==1.1.0
 jedi==0.17.2
 Jinja2==2.11.2
@@ -94,6 +96,7 @@ SQLAlchemy==1.3.20
 stevedore==1.32.0
 termcolor==1.1.0
 toml==0.10.2
+traitlets==5.0.5
 typing==3.7.4.3
 uritemplate==3.0.1
 urllib3==1.25.10

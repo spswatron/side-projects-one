@@ -5,6 +5,7 @@ import flask_praetorian
 from bs4 import BeautifulSoup as bs
 import mammoth
 import string
+from sqlalchemy_searchable import search
 
 blog = Blueprint('blogger', __name__, template_folder='templates')
 
@@ -127,8 +128,9 @@ def modify_post(number):
 @blog.route("/blog/search", methods=['POST'])
 def blog_search():
     if request.method == 'POST':
-        matches = Post.query.whoosh_search(request.json['query']).all()
-        return {'matches': matches}
+        query = db.session.query(Post)
+        query = search(query, 'first')
+        return {'matches': query.all()}
 
 
 @blog.route("/html_new_post", methods=['POST'])

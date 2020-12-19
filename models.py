@@ -1,6 +1,10 @@
 from __init__ import db, app
 from datetime import datetime
-import flask_whooshalchemy as whooshalchemy
+from sqlalchemy_searchable import make_searchable
+from sqlalchemy_utils.types import TSVectorType
+
+
+make_searchable(db.metadata)
 
 
 class Post(db.Model):
@@ -14,6 +18,9 @@ class Post(db.Model):
     title = db.Column(db.String(), unique=True)
     content = db.Column(db.String())
     show = db.Column(db.Boolean, default=False)
+    search_vector = db.Column(TSVectorType('title', 'content',
+                                           weights={'title': 'A', 'content': 'C'})
+    )
 
     def __init__(self, url, title, content):
         self.url = url
@@ -37,8 +44,6 @@ class Post(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
-whooshalchemy.whoosh_index(app, Post)
 
 
 class User(db.Model):
