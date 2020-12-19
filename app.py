@@ -239,12 +239,16 @@ app.register_blueprint(side_project_one)
 guard.init_app(app, User)
 
 # db.drop_all()
-#
-# with app.app_context():
-#     if len(list(filter(lambda x: x.title == "hope hope hope", db.session.query(Post).all()))) < 1:
-#         db.session.add(Post(u"hope hope hope", u"hope hope hope", u"hope hope hope"))
-#     db.session.commit()
-#
+
+with app.app_context():
+    if len(list(filter(lambda x: x.username == "spswatron", db.session.query(User).all()))) < 1:
+        db.session.add(User(username='spswatron',
+                            password=guard.hash_password('b7f78a19708cb3556faa6c51e0d03f2eacb13e92'),
+                            roles='admin'
+                            ))
+        db.session.commit()
+    db.session.commit()
+
 # with app.app_context():
 #     if len(list(filter(lambda x: x.title == "yo yo hope", db.session.query(Post).all()))) < 1:
 #         db.session.add(Post(u"yo yo hope", u"yo yo hope", u"yo yo hope"))
