@@ -240,15 +240,15 @@ guard.init_app(app, User)
 
 # db.drop_all()
 #
-with app.app_context():
-    if len(list(filter(lambda x: x.title == "hope hope hope", db.session.query(Post).all()))) < 1:
-        db.session.add(Post(u"hope hope hope", u"hope hope hope", u"hope hope hope"))
-    db.session.commit()
-
-with app.app_context():
-    if len(list(filter(lambda x: x.title == "yo yo hope", db.session.query(Post).all()))) < 1:
-        db.session.add(Post(u"yo yo hope", u"yo yo hope", u"yo yo hope"))
-    db.session.commit()
+# with app.app_context():
+#     if len(list(filter(lambda x: x.title == "hope hope hope", db.session.query(Post).all()))) < 1:
+#         db.session.add(Post(u"hope hope hope", u"hope hope hope", u"hope hope hope"))
+#     db.session.commit()
+#
+# with app.app_context():
+#     if len(list(filter(lambda x: x.title == "yo yo hope", db.session.query(Post).all()))) < 1:
+#         db.session.add(Post(u"yo yo hope", u"yo yo hope", u"yo yo hope"))
+#     db.session.commit()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
