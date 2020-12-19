@@ -1,9 +1,12 @@
+from sqlalchemy_searchable import make_searchable
 from __init__ import db, app
 from datetime import datetime
-from sqlalchemy_searchable import make_searchable
 from sqlalchemy_utils.types import TSVectorType
+from sqlalchemy import create_engine
+from dotenv import load_dotenv
+import os
 
-
+load_dotenv()
 make_searchable(db.metadata)
 
 
@@ -13,14 +16,16 @@ class Post(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(), unique=True)
+    url = db.Column(db.UnicodeText, unique=True)
     time = db.Column(db.DateTime, default=datetime.utcnow())
-    title = db.Column(db.String(), unique=True)
-    content = db.Column(db.String())
+    title = db.Column(db.UnicodeText, unique=True)
+    content = db.Column(db.UnicodeText)
     show = db.Column(db.Boolean, default=False)
-    search_vector = db.Column(TSVectorType('title', 'content',
-                                           weights={'title': 'A', 'content': 'C'})
-    )
+
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    with engine.connect() as connection:
+        result = connection.execute("DROP FUNCTION IF EXISTS posts_search_vector_update() CASCADE")
+    search_vector = db.Column(TSVectorType('title', 'content'))
 
     def __init__(self, url, title, content):
         self.url = url
@@ -37,7 +42,8 @@ class Post(db.Model):
             'time': self.time,
             'title': self.title,
             'content': self.content,
-            'show': self.show
+            'show': self.show,
+            'vector': self.search_vector
         }
 
     def save(self):
@@ -45,8 +51,11 @@ class Post(db.Model):
         db.session.commit()
 
 
+db.configure_mappers()
+
 
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text, unique=True)
     password = db.Column(db.Text)

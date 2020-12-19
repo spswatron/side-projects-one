@@ -1,11 +1,12 @@
 from flask import request, Blueprint
+from numpy import unicode
+from sqlalchemy_searchable import search
 from __init__ import db, guard, InvalidUsage
 from models import Post
 import flask_praetorian
 from bs4 import BeautifulSoup as bs
 import mammoth
 import string
-from sqlalchemy_searchable import search
 
 blog = Blueprint('blogger', __name__, template_folder='templates')
 
@@ -129,8 +130,10 @@ def modify_post(number):
 def blog_search():
     if request.method == 'POST':
         query = db.session.query(Post)
-        query = search(query, 'first')
-        return {'matches': query.all()}
+        query = search(query, request.json['query']).all()
+        return {'matches': list(map(lambda x: x.json(), query)), 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
+        # return{'everything': list(map(lambda x: x.json(), db.session.query(Post).all()))}
+        # return Post.query.search(unicode(request.json['query'], "utf-8")).limit(5).all()
 
 
 @blog.route("/html_new_post", methods=['POST'])
@@ -143,7 +146,7 @@ def html_new_post():
                                  db.session.query(Post).all()))
         html = request.json['html']
         if len(same_url) == 0:
-            new_post = Post(url=url, title=title, content=html)
+            new_post = Post(url=unicode(url, "utf-8"), title=unicode(title, "utf-8"), content=unicode(html, "utf-8"))
             new_post.save()
             return {'html': html,
                     'id': new_post.id,
@@ -160,10 +163,10 @@ def doc_to_pdf():
         html = bs(result.value, 'html.parser').prettify()
         title = response.filename.split(".")[0]
         url = convert_title(title)
-        same_url = list(filter(lambda x: x.url == convert_title(title),
+        same_url = list(filter(lambda x: x.url == convert_title(unicode(title, "utf-8")),
                                  db.session.query(Post).all()))
         if len(same_url) == 0:
-            new_post = Post(url=url, title=title, content=html)
+            new_post = Post(url=unicode(url, "utf-8"), title=unicode(title, "utf-8"), content=unicode(html, "utf-8"))
             new_post.save()
             return_post = new_post
         else:

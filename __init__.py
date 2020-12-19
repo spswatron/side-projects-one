@@ -9,6 +9,7 @@ from flask_moment import Moment
 from os import environ, path
 from dotenv import load_dotenv
 import flask_praetorian
+from sqlalchemy_searchable import make_searchable
 
 basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, '.env'))
@@ -37,6 +38,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 db = SQLAlchemy(app)
 guard = flask_praetorian.Praetorian()
+app.app_context().push()
 
 
 class InvalidUsage(Exception):
