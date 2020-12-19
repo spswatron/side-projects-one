@@ -138,7 +138,7 @@ def blog_search():
 
 
 @blog.route("/blog/search_all", methods=['POST'])
-def blog_search():
+def blog_show_search():
     if request.method == 'POST':
         query = db.session.query(Post)
         query = search(query, request.json['query']).all()
