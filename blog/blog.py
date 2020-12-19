@@ -131,7 +131,7 @@ def blog_search():
         query = db.session.query(Post)
         query = search(query, request.json['query']).all()
         matches = list(map(lambda x: x.json(), query))
-        showable_matches = list(filter(lambda x: x.show, matches))
+        showable_matches = list(filter(lambda x: x['show'], matches))
         return {'matches': showable_matches, 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
         # return{'everything': list(map(lambda x: x.json(), db.session.query(Post).all()))}
         # return Post.query.search(unicode(request.json['query'], "utf-8")).limit(5).all()
