@@ -129,7 +129,7 @@ def modify_post(number):
 def blog_search():
     if request.method == 'POST':
         query = db.session.query(Post)
-        query = search(query, request.json['query']).all()
+        query = search(query, request.json['query'], sort=True).all()
         matches = list(map(lambda x: x.json(), query))
         showable_matches = list(filter(lambda x: x['show'], matches))
         return {'matches': showable_matches, 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
@@ -141,7 +141,7 @@ def blog_search():
 def blog_show_search():
     if request.method == 'POST':
         query = db.session.query(Post)
-        query = search(query, request.json['query']).all()
+        query = search(query, request.json['query'], sort=True).all()
         matches = list(map(lambda x: x.json(), query))
         return {'matches': matches, 'everything': list(map(lambda x: x.json(), db.session.query(Post)))}
 
