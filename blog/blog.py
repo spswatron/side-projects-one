@@ -1,4 +1,4 @@
-from flask import request, Blueprint
+from flask import request, Blueprint, send_file, make_response
 from sqlalchemy_searchable import search
 from __init__ import db, guard, InvalidUsage
 from models import Post
@@ -164,6 +164,7 @@ def html_new_post():
         raise InvalidUsage('A post with this title already exists. Try another one?', status_code=410)
 
 
+
 @blog.route("/doc_to_html", methods=['GET', 'POST'])
 @flask_praetorian.auth_required
 def doc_to_pdf():
@@ -176,7 +177,7 @@ def doc_to_pdf():
         same_url = list(filter(lambda x: x.url == convert_title(title),
                                  db.session.query(Post).all()))
         if len(same_url) == 0:
-            new_post = Post(url=url, title=title, content=html)
+            new_post = Post(url=url, title=title, content=html, image=request.files['imageFile'].read())
             new_post.save()
             return_post = new_post
         else:
@@ -184,6 +185,15 @@ def doc_to_pdf():
             db.session.commit()
             return_post = same_url[0]
 
-        return {'html': html,
-                'id': return_post.id,
-                'posts': post_list()}
+        # return {'html': html,
+        #         'id': return_post.id,
+        #         'posts': post_list()}
+
+        image_binary = return_post.image
+        response = make_response()
+        response.headers.set('Content-Type', 'image/jpeg')
+        response.headers.set(
+            'Content-Disposition', 'attachment', filename=return_post.url + '.jpg')
+        return response
+
+        # return send_file(return_post.title, mimetype='image/gif')

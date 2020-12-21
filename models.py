@@ -20,6 +20,7 @@ class Post(db.Model):
     time = db.Column(db.DateTime, default=datetime.utcnow())
     title = db.Column(db.UnicodeText, unique=True)
     content = db.Column(db.UnicodeText)
+    image = db.Column(db.LargeBinary)
     show = db.Column(db.Boolean, default=False)
 
     engine = create_engine(os.getenv("DATABASE_URL"))
@@ -27,10 +28,11 @@ class Post(db.Model):
         result = connection.execute("DROP FUNCTION IF EXISTS posts_search_vector_update() CASCADE")
     search_vector = db.Column(TSVectorType('title', 'content'))
 
-    def __init__(self, url, title, content):
+    def __init__(self, url, title, content, image):
         self.url = url
         self.title = title
         self.content = content
+        self.image = image
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -43,7 +45,6 @@ class Post(db.Model):
             'title': self.title,
             'content': self.content,
             'show': self.show,
-            'vector': self.search_vector
         }
 
     def save(self):

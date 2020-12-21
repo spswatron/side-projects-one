@@ -30,6 +30,8 @@ Flask-RESTful==0.3.8
 flask-restplus==0.13.0
 Flask-Script==2.0.6
 Flask-SQLAlchemy==2.4.4
+Flask-WhooshAlchemy==0.56
+flask-whooshalchemy3 @ git+git://github.com/blakev/Flask-WhooshAlchemy3.git@e87bc3cd330f7c5a67aca0f4ebe370b274cc7f8d
 google-api-core==1.22.4
 google-api-python-client==1.12.3
 google-auth==1.22.1
@@ -59,7 +61,7 @@ packaging==20.4
 pandas==1.1.5
 parso==0.7.1
 passlib==1.7.4
-pbr==5.5.1
+pbr==3.1.1
 pendulum==2.1.2
 pexpect==4.8.0
 pickleshare==0.7.5
@@ -93,6 +95,8 @@ singledispatch==3.4.0.3
 six==1.15.0
 soupsieve==2.1
 SQLAlchemy==1.3.20
+SQLAlchemy-Searchable==1.2.0
+SQLAlchemy-Utils==0.36.8
 stevedore==1.32.0
 termcolor==1.1.0
 toml==0.10.2
@@ -100,6 +104,7 @@ traitlets==5.0.5
 typing==3.7.4.3
 uritemplate==3.0.1
 urllib3==1.25.10
+validators==0.18.2
 virtualenv==20.0.31
 virtualenv-clone==0.5.4
 virtualenvwrapper==4.8.4
