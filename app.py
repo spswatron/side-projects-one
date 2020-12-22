@@ -1,258 +1,77 @@
-from sqlalchemy import create_engine
-from __init__ import guard, app, db
-from models import User, Post
-from blog.blog import blog
-from side_projects_one.side_projects_one import side_project_one
-from dotenv import load_dotenv
-import os
+from flask_mail import Message
+from random_genre import random_genre
+from flask import jsonify, render_template, request, redirect, Markup
+from __init__ import app, mail, credential
+import gspread
 
-load_dotenv()
-engine = create_engine(os.getenv("DATABASE_URL"))
-with engine.connect() as connection:
-    result = connection.execute(
-        """DROP TYPE IF EXISTS tsq_state CASCADE;
-            CREATE TYPE tsq_state AS (
-                search_query text,
-                parentheses_stack int,
-                skip_for int,
-                current_token text,
-                current_index int,
-                current_char text,
-                previous_char text,
-                tokens text[]
-            );
-            
-            CREATE OR REPLACE FUNCTION tsq_append_current_token(state tsq_state)
-            RETURNS tsq_state AS $$
-            BEGIN
-                IF state.current_token != '' THEN
-                    state.tokens := array_append(state.tokens, state.current_token);
-                    state.current_token := '';
-                END IF;
-                RETURN state;
-            END;
-            $$ LANGUAGE plpgsql IMMUTABLE;
-            
-            
-            CREATE OR REPLACE FUNCTION tsq_tokenize_character(state tsq_state)
-            RETURNS tsq_state AS $$
-            BEGIN
-                IF state.current_char = '(' THEN
-                    state.tokens := array_append(state.tokens, '(');
-                    state.parentheses_stack := state.parentheses_stack + 1;
-                    state := tsq_append_current_token(state);
-                ELSIF state.current_char = ')' THEN
-                    IF (state.parentheses_stack > 0 AND state.current_token != '') THEN
-                        state := tsq_append_current_token(state);
-                        state.tokens := array_append(state.tokens, ')');
-                        state.parentheses_stack := state.parentheses_stack - 1;
-                    END IF;
-                ELSIF state.current_char = '"' THEN
-                    state.skip_for := position('"' IN substring(
-                        state.search_query FROM state.current_index + 1
-                    ));
-            
-                    IF state.skip_for > 1 THEN
-                        state.tokens = array_append(
-                            state.tokens,
-                            substring(
-                                state.search_query
-                                FROM state.current_index FOR state.skip_for + 1
-                            )
-                        );
-                    ELSIF state.skip_for = 0 THEN
-                        state.current_token := state.current_token || state.current_char;
-                    END IF;
-                ELSIF (
-                    state.current_char = '-' AND
-                    (state.current_index = 1 OR state.previous_char = ' ')
-                ) THEN
-                    state.tokens := array_append(state.tokens, '-');
-                ELSIF state.current_char = ' ' THEN
-                    state := tsq_append_current_token(state);
-                ELSE
-                    state.current_token = state.current_token || state.current_char;
-                END IF;
-                RETURN state;
-            END;
-            $$ LANGUAGE plpgsql IMMUTABLE;
-            
-            
-            CREATE OR REPLACE FUNCTION tsq_tokenize(search_query text) RETURNS text[] AS $$
-            DECLARE
-                state tsq_state;
-            BEGIN
-                SELECT
-                    search_query::text AS search_query,
-                    0::int AS parentheses_stack,
-                    0 AS skip_for,
-                    ''::text AS current_token,
-                    0 AS current_index,
-                    ''::text AS current_char,
-                    ''::text AS previous_char,
-                    '{}'::text[] AS tokens
-                INTO state;
-            
-                state.search_query := lower(trim(
-                    regexp_replace(search_query, '""+', '""', 'g')
-                ));
-            
-                FOR state.current_index IN (
-                    SELECT generate_series(1, length(state.search_query))
-                ) LOOP
-                    state.current_char := substring(
-                        search_query FROM state.current_index FOR 1
-                    );
-            
-                    IF state.skip_for > 0 THEN
-                        state.skip_for := state.skip_for - 1;
-                        CONTINUE;
-                    END IF;
-            
-                    state := tsq_tokenize_character(state);
-                    state.previous_char := state.current_char;
-                END LOOP;
-                state := tsq_append_current_token(state);
-            
-                state.tokens := array_nremove(state.tokens, '(', -state.parentheses_stack);
-            
-                RETURN state.tokens;
-            END;
-            $$ LANGUAGE plpgsql IMMUTABLE;
-            
-            
-            -- Processes an array of text search tokens and returns a tsquery
-            CREATE OR REPLACE FUNCTION tsq_process_tokens(config regconfig, tokens text[])
-            RETURNS tsquery AS $$
-            DECLARE
-                result_query text;
-                previous_value text;
-                value text;
-            BEGIN
-                result_query := '';
-            
-                FOREACH value IN ARRAY tokens LOOP
-                    IF value = '"' THEN
-                        CONTINUE;
-                    END IF;
-            
-                    IF value = 'or' THEN
-                        value := ' | ';
-                    END IF;
-            
-                    IF left(value, 1) = '"' AND right(value, 1) = '"' THEN
-                        value := phraseto_tsquery(config, value);
-                    ELSIF value NOT IN ('(', ' | ', ')', '-') THEN
-                        value := quote_literal(value) || ':*';
-                    END IF;
-            
-                    IF previous_value = '-' THEN
-                        IF value = '(' THEN
-                            value := '!' || value;
-                        ELSIF value = ' | ' THEN
-                            CONTINUE;
-                        ELSE
-                            value := '!(' || value || ')';
-                        END IF;
-                    END IF;
-            
-                    SELECT
-                        CASE
-                            WHEN result_query = '' THEN value
-                            WHEN previous_value = ' | ' AND value = ' | ' THEN result_query
-                            WHEN previous_value = ' | ' THEN result_query || ' | ' || value
-                            WHEN previous_value IN ('!(', '(') OR value = ')' THEN result_query || value
-                            WHEN value != ' | ' THEN result_query || ' & ' || value
-                            ELSE result_query
-                        END
-                    INTO result_query;
-            
-                    IF result_query = ' | ' THEN
-                        result_query := '';
-                    END IF;
-            
-                    previous_value := value;
-                END LOOP;
-            
-                RETURN to_tsquery(config, result_query);
-            END;
-            $$ LANGUAGE plpgsql IMMUTABLE;
-            
-            
-            CREATE OR REPLACE FUNCTION tsq_process_tokens(tokens text[])
-            RETURNS tsquery AS $$
-                SELECT tsq_process_tokens(get_current_ts_config(), tokens);
-            $$ LANGUAGE SQL IMMUTABLE;
-            
-            
-            CREATE OR REPLACE FUNCTION tsq_parse(config regconfig, search_query text)
-            RETURNS tsquery AS $$
-                SELECT tsq_process_tokens(config, tsq_tokenize(search_query));
-            $$ LANGUAGE SQL IMMUTABLE;
-            
-            
-            CREATE OR REPLACE FUNCTION tsq_parse(config text, search_query text)
-            RETURNS tsquery AS $$
-                SELECT tsq_parse(config::regconfig, search_query);
-            $$ LANGUAGE SQL IMMUTABLE;
-            
-            
-            CREATE OR REPLACE FUNCTION tsq_parse(search_query text) RETURNS tsquery AS $$
-                SELECT tsq_parse(get_current_ts_config(), search_query);
-            $$ LANGUAGE SQL IMMUTABLE;
-            
-            
-            -- remove first N elements equal to the given value from the array (array
-            -- must be one-dimensional)
-            --
-            -- If negative value is given as the third argument the removal of elements
-            -- starts from the last array element.
-            CREATE OR REPLACE FUNCTION array_nremove(anyarray, anyelement, int)
-            RETURNS ANYARRAY AS $$
-                WITH replaced_positions AS (
-                    SELECT UNNEST(
-                        CASE
-                        WHEN $2 IS NULL THEN
-                            '{}'::int[]
-                        WHEN $3 > 0 THEN
-                            (array_positions($1, $2))[1:$3]
-                        WHEN $3 < 0 THEN
-                            (array_positions($1, $2))[
-                                (cardinality(array_positions($1, $2)) + $3 + 1):
-                            ]
-                        ELSE
-                            '{}'::int[]
-                        END
-                    ) AS position
-                )
-                SELECT COALESCE((
-                    SELECT array_agg(value)
-                    FROM unnest($1) WITH ORDINALITY AS t(value, index)
-                    WHERE index NOT IN (SELECT position FROM replaced_positions)
-                ), $1[1:0]);
-            $$ LANGUAGE SQL IMMUTABLE;"""
 
-    )
+def send_email(email, subject, name, message):
+    msg = Message(subject, sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
+    msg.html = render_template("PersonalMessageEmailTemplate/Code/index.html", name=name,
+                               email=email, subject=subject, message=message)
+    mail.send(msg)
+    return "Sent"
 
-app.register_blueprint(blog)
-app.register_blueprint(side_project_one)
-guard.init_app(app, User)
 
-# db.drop_all()
+def send_personal_email(email, subject, name, message):
+    msg = Message(subject, sender='ursaminorsweb@gmail.com', recipients=['ashley_e_chang@brown.edu'])
+    msg.html = render_template("PersonalMessageEmailTemplate/Code/index.html", name=name,
+                               email=email, subject=subject,
+                               message=Markup("Personal Website Contact Form Response: <br>" + message))
+    mail.send(msg)
+    return "Sent"
 
-with app.app_context():
-    if len(list(filter(lambda x: x.username == "spswatron", db.session.query(User).all()))) < 1:
-        db.session.add(User(username='spswatron',
-                            password=guard.hash_password('b7f78a19708cb3556faa6c51e0d03f2eacb13e92'),
-                            roles='admin'
-                            ))
-        db.session.commit()
-    db.session.commit()
 
-# with app.app_context():
-#     if len(list(filter(lambda x: x.title == "yo yo hope", db.session.query(Post).all()))) < 1:
-#         db.session.add(Post(u"yo yo hope", u"yo yo hope", u"yo yo hope"))
-#     db.session.commit()
+@app.route('/', methods=["GET", "POST"])
+def all_responses():
+    return redirect("https://www.ashley-chang.me/index")
+
+
+@app.route('/alumni', methods=["GET", "POST"])
+def alumni():
+    if request.method == "POST":
+        client = gspread.authorize(credential)
+        alumni_list = client.open("Alumni Bios").sheet1
+        return jsonify(alumni_list.get_all_records())
+
+
+@app.route('/members', methods=["GET", "POST"])
+def members():
+    if request.method == "POST":
+        client = gspread.authorize(credential)
+        current_members = client.open("Current Member Bios").sheet1
+        return jsonify(current_members.get_all_records())
+
+
+@app.route('/submit_form', methods=["POST"])
+def submit_form():
+    print(request)
+    if request.method == 'POST':
+        response = request.get_json()
+        send_email(response['email'], "Ursas Website Contact", response['name'], response['message'])
+        return 'Sent'
+    return "Not Post"
+
+
+@app.route('/submit_personal_form', methods=["POST"])
+def submit_personal_form():
+    print(request)
+    if request.method == 'POST':
+        response = request.get_json()
+        send_personal_email(response['email'], response['subject'], response['name'], response['message'])
+        return 'Sent'
+    return "Not Post"
+
+
+@app.route("/send_mail", methods=['GET', 'POST'])
+def index():
+    return "Sent"
+
+
+@app.route("/random_genre", methods=['GET', 'POST'])
+def r_genre():
+    return random_genre()
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

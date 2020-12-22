@@ -1,23 +1,12 @@
 from flask import *
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail, Message
-from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from os.path import join, dirname, realpath
 from oauth2client.service_account import ServiceAccountCredentials
-from flask_moment import Moment
-from os import environ, path
-from dotenv import load_dotenv
-import flask_praetorian
-from sqlalchemy_searchable import make_searchable
 
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '.env'))
 
 app = Flask(__name__)
-app.config.from_object(environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-moment = Moment(app)
 credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)), 'ursas.json'),
                                                               ["https://spreadsheets.google.com/feeds",
                                                                "https://www.googleapis.com/auth/spreadsheets",
@@ -36,22 +25,4 @@ app.config['MAIL_USERNAME'] = 'ursaminorsweb@gmail.com'
 app.config['MAIL_PASSWORD'] = 'hiygxhofxbpcabxq'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-db = SQLAlchemy(app)
-guard = flask_praetorian.Praetorian()
 app.app_context().push()
-
-
-class InvalidUsage(Exception):
-    status_code = 400
-
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        if status_code is not None:
-            self.status_code = status_code
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['message'] = self.message
-        return rv

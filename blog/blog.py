@@ -1,6 +1,8 @@
+import os
+
 from flask import request, Blueprint, send_file, make_response
 from sqlalchemy_searchable import search
-from __init__ import db, guard, InvalidUsage
+from __init__ import db, guard, InvalidUsage, app
 from models import Post
 import flask_praetorian
 from bs4 import BeautifulSoup as bs
@@ -164,6 +166,14 @@ def html_new_post():
         raise InvalidUsage('A post with this title already exists. Try another one?', status_code=410)
 
 
+@blog.route("/get_blog_image/<number>", methods=['GET', 'POST'])
+def doc_to_pdf(number):
+    if request.method == 'POST':
+        image_path = app.config['IMAGE_FOLDER'], str(number) + '.jpg'
+        if os.path.exists(image_path):
+            return send_file(image_path, mimetype='image/*')
+        return "image does not exist"
+
 
 @blog.route("/doc_to_html", methods=['GET', 'POST'])
 @flask_praetorian.auth_required
@@ -174,26 +184,20 @@ def doc_to_pdf():
         html = bs(result.value, 'html.parser').prettify()
         title = response.filename.split(".")[0]
         url = convert_title(title)
+        image = request.files['imageFile']
         same_url = list(filter(lambda x: x.url == convert_title(title),
                                  db.session.query(Post).all()))
         if len(same_url) == 0:
-            new_post = Post(url=url, title=title, content=html, image=request.files['imageFile'].read())
+            new_post = Post(url=url, title=title, content=html)
             new_post.save()
             return_post = new_post
+            image.save(os.path.join(app.config['IMAGE_FOLDER'], return_post.id + '.jpg'))
         else:
             same_url[0].content = html
             db.session.commit()
             return_post = same_url[0]
+            image.save(os.path.join(app.config['IMAGE_FOLDER'], return_post.id + '.jpg'))
 
-        # return {'html': html,
-        #         'id': return_post.id,
-        #         'posts': post_list()}
-
-        image_binary = return_post.image
-        response = make_response()
-        response.headers.set('Content-Type', 'image/jpeg')
-        response.headers.set(
-            'Content-Disposition', 'attachment', filename=return_post.url + '.jpg')
-        return response
-
-        # return send_file(return_post.title, mimetype='image/gif')
+        return {'html': html,
+                'id': return_post.id,
+                'posts': post_list()}
