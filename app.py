@@ -7,6 +7,7 @@ from flask_mail import Mail, Message
 from flask import Flask
 from os.path import join, dirname, realpath
 from oauth2client.service_account import ServiceAccountCredentials
+from sherlock.dial_sherlock import dial_sherlock
 
 
 app = Flask(__name__)
@@ -97,6 +98,15 @@ def index():
 @app.route("/random_genre", methods=['GET', 'POST'])
 def r_genre():
     return random_genre()
+
+
+@app.route("/sherlock/<username>", methods=['GET', 'POST'])
+def sherlock(username):
+    results = dial_sherlock(username)
+    for pair in results:
+        for key in pair:
+            pair[key] = pair[key].replace("\\n', ", "").replace("\\n']", "")
+    return {"matches": results}
 
 
 if __name__ == '__main__':
