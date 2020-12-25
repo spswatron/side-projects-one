@@ -51,7 +51,7 @@ def send_personal_email(email, subject, name, message):
 
 @app.route('/', methods=["GET", "POST"])
 def all_responses():
-    return redirect("https://www.ashley-chang.me/index")
+    return "wecome to api"
 
 
 @app.route('/alumni', methods=["GET", "POST"])

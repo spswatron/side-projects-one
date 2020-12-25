@@ -10,5 +10,4 @@ def dial_sherlock(username: str):
     for result in out:
         result = result.split("\\x")[0].split(": ")
         modified.append({result[0]: result[1]})
-    print(modified)
     return modified
