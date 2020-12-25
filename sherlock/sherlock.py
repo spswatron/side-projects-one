@@ -617,6 +617,59 @@ def main():
                            proxy=args.proxy,
                            timeout=args.timeout)
 
+        if args.output:
+            result_file = args.output
+        elif args.folderoutput:
+            # The usernames results should be stored in a targeted folder.
+            # If the folder doesn't exist, create it first
+            os.makedirs(args.folderoutput, exist_ok=True)
+            result_file = os.path.join(args.folderoutput, f"{username}.txt")
+        else:
+            result_file = f"{username}.txt"
+
+        with open(result_file, "w", encoding="utf-8") as file:
+            exists_counter = 0
+            for website_name in results:
+                dictionary = results[website_name]
+                if dictionary.get("status").status == QueryStatus.CLAIMED:
+                    exists_counter += 1
+                    file.write(dictionary["url_user"] + "\n")
+            file.write(f"Total Websites Username Detected On : {exists_counter}\n")
+
+        if args.csv:
+            result_file = f"{username}.csv"
+            if args.folderoutput:
+                # The usernames results should be stored in a targeted folder.
+                # If the folder doesn't exist, create it first
+                os.makedirs(args.folderoutput, exist_ok=True)
+                result_file = os.path.join(args.folderoutput, result_file)
+
+            with open(result_file, "w", newline='', encoding="utf-8") as csv_report:
+                writer = csv.writer(csv_report)
+                writer.writerow(['username',
+                                 'name',
+                                 'url_main',
+                                 'url_user',
+                                 'exists',
+                                 'http_status',
+                                 'response_time_s'
+                                 ]
+                                )
+                for site in results:
+                    response_time_s = results[site]['status'].query_time
+                    if response_time_s is None:
+                        response_time_s = ""
+                    writer.writerow([username,
+                                     site,
+                                     results[site]['url_main'],
+                                     results[site]['url_user'],
+                                     str(results[site]['status'].status),
+                                     results[site]['http_status'],
+                                     response_time_s
+                                     ]
+                                    )
+        print()
+
 
 if __name__ == "__main__":
     main()
