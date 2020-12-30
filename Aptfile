@@ -1,3 +1,5 @@
 python-opencv
 poppler-utils
 tesseract-ocr
+tesseract-ocr-all
+imagemagick
