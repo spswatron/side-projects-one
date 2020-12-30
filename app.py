@@ -119,6 +119,8 @@ def process_image(npimg, image: bool):
     return result
 
 
+
+
 @app.route("/ocr_upload", methods=['POST'])
 def ocr_upload():
     filestr = request.files['file'].read()
