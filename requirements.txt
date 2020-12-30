@@ -126,7 +126,6 @@ termcolor==1.1.0
 textcleaner==0.4.26
 tifffile==2020.10.1
 toml==0.10.2
-torchvision==0.8.1
 torrequest==0.1.0
 tqdm==4.51.0
 traitlets==5.0.5
