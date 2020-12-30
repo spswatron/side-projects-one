@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "apt-get install python-opencv"
+      "predeploy": "apt-get update && apt-get install python-opencv tesseract-ocr"
     }
   }
 }
