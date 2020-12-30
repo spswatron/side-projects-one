@@ -1,7 +1,0 @@
-{
-  "scripts": {
-    "dokku": {
-      "predeploy": "dpkg --configure -a && apt-get -y update && apt-get -y install python-opencv"
-    }
-  }
-}
