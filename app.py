@@ -8,7 +8,11 @@ from flask import Flask
 from os.path import join, dirname, realpath
 from oauth2client.service_account import ServiceAccountCredentials
 from dial_sherlock import dial_sherlock
-
+import pytesseract
+import numpy
+from cv2 import cv2
+from pdf2image import convert_from_bytes
+import tempfile
 
 app = Flask(__name__)
 credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)), 'ursas.json'),
@@ -90,11 +94,6 @@ def submit_personal_form():
     return "Not Post"
 
 
-@app.route("/send_mail", methods=['GET', 'POST'])
-def index():
-    return "Sent"
-
-
 @app.route("/random_genre", methods=['GET', 'POST'])
 def r_genre():
     return random_genre()
@@ -107,6 +106,38 @@ def sherlock(username):
         for key in pair:
             pair[key] = pair[key].replace("\\n', ", "").replace("\\n']", "")
     return {"matches": results}
+
+
+def process_image(npimg, image: bool):
+    img = None
+    if image:
+        img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
+    else:
+        img = cv2.imread(npimg)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    result = pytesseract.image_to_string(img, config=r'--oem 3 --psm 4')
+    return result
+
+
+@app.route("/ocr_upload", methods=['POST'])
+def ocr_upload():
+    filestr = request.files['file'].read()
+    # convert string data to numpy array
+    npimg = numpy.fromstring(filestr, numpy.uint8)
+    result = ""
+
+    if '.pdf' in request.files['file'].filename:
+        with tempfile.TemporaryDirectory() as path:
+            images = convert_from_bytes(npimg, output_folder=path)
+            for image in images:
+                print(image.filename)
+                result += process_image(image.filename, False)
+
+    else:
+        result = process_image(npimg, True)
+
+    result = result.replace("\n", "<br>")
+    return {"ocr": result}
 
 
 if __name__ == '__main__':
