@@ -10,7 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from dial_sherlock import dial_sherlock
 import pytesseract
 import numpy
-from cv2 import cv2
+from cv2 import *
 from pdf2image import convert_from_bytes
 import tempfile
 
