@@ -36,7 +36,8 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
 mail = Mail(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app)
+socketio.init_app(app, cors_allowed_origins="*")
 
 
 def send_email(email, subject, name, message):
@@ -102,7 +103,6 @@ def r_genre():
     return random_genre()
 
 
-@socketio.on('sherlock')
 def sherlock(username):
     results = dial_sherlock(username)
     for pair in results:
