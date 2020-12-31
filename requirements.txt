@@ -7,6 +7,7 @@ attrs==20.2.0
 backcall==0.2.0
 BareNecessities==0.2.8
 beautifulsoup4==4.9.3
+bidict==0.21.2
 blinker==1.4
 bs4==0.0.1
 cachetools==4.1.1
@@ -33,6 +34,7 @@ flask-praetorian==1.1.0
 Flask-RESTful==0.3.8
 flask-restplus==0.13.0
 Flask-Script==2.0.6
+Flask-SocketIO==5.0.1
 Flask-SQLAlchemy==2.4.4
 Flask-WhooshAlchemy==0.56
 flask-whooshalchemy3==0.2.0
@@ -101,6 +103,8 @@ python-bidi==0.4.2
 python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-editor==1.0.4
+python-engineio==4.0.0
+python-socketio==5.0.4
 pytz==2020.1
 pytzdata==2020.1
 PyWavelets==1.1.1

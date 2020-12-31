@@ -13,6 +13,8 @@ import numpy
 import cv2
 from pdf2image import convert_from_bytes
 import tempfile
+from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__)
 credential = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)), 'ursas.json'),
@@ -34,6 +36,8 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
 mail = Mail(app)
+socketio = SocketIO(app)
+socketio.init_app(app, cors_allowed_origins="*")
 
 
 def send_email(email, subject, name, message):
@@ -119,28 +123,30 @@ def process_image(npimg, image: bool):
     return result
 
 
-
-
-@app.route("/ocr_upload", methods=['POST'])
-def ocr_upload():
-    filestr = request.files['file'].read()
+@socketio.on('ocr_upload')
+def ocr_upload(formData):
+    print("reached")
+    filestr = formData['file']
     # convert string data to numpy array
     npimg = numpy.fromstring(filestr, numpy.uint8)
     result = ""
 
-    if '.pdf' in request.files['file'].filename:
+    if '.pdf' in formData['filename']:
         with tempfile.TemporaryDirectory() as path:
             images = convert_from_bytes(npimg, output_folder=path)
+            i = 1
             for image in images:
                 print(image.filename)
                 result += process_image(image.filename, False)
+                emit("ocr_upload", {"stats": [i, len(images)]})
+                i += 1
 
     else:
         result = process_image(npimg, True)
 
     result = result.replace("\n", "<br>")
-    return {"ocr": result}
+    emit("ocr_upload", {"ocr": result})
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    socketio.run(debug=True, host='0.0.0.0')
