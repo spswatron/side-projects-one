@@ -130,14 +130,13 @@ def ocr_upload(formData):
     # convert string data to numpy array
     npimg = numpy.fromstring(filestr, numpy.uint8)
     result = ""
-
     if '.pdf' in formData['filename']:
         with tempfile.TemporaryDirectory() as path:
             images = convert_from_bytes(npimg, output_folder=path)
             i = 1
+            emit("ocr_upload", {"stats": [i / 2, len(images)]})
             for image in images:
                 print(image.filename)
-                emit("ocr_upload", {"stats": [i / 2, len(images)]})
                 result += process_image(image.filename, False)
                 emit("ocr_upload", {"stats": [i, len(images)]})
                 i += 1
