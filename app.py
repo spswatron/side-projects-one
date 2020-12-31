@@ -125,6 +125,7 @@ def process_image(npimg, image: bool):
 @socketio.on('ocr_upload')
 def ocr_upload(formData):
     print("reached")
+    emit("ocr_upload", {"stats": [1, 50]})
     filestr = formData['file']
     # convert string data to numpy array
     npimg = numpy.fromstring(filestr, numpy.uint8)
@@ -136,6 +137,7 @@ def ocr_upload(formData):
             i = 1
             for image in images:
                 print(image.filename)
+                emit("ocr_upload", {"stats": [i / 2, len(images)]})
                 result += process_image(image.filename, False)
                 emit("ocr_upload", {"stats": [i, len(images)]})
                 i += 1
