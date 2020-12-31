@@ -1,3 +1,3 @@
-web: gunicorn -k gevent -w 3 app:app
+web: gunicorn -k eventlet app:app
 
 
