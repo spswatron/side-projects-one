@@ -3,6 +3,7 @@
 This module defines the objects for notifying the caller about the
 results of queries.
 """
+from flask_socketio import emit
 from result import QueryStatus
 from colorama import Fore, Style, init
 
@@ -154,6 +155,7 @@ class QueryNotifyPrint(QueryNotify):
 
         title = "Checking username"
         if self.color:
+            emit("sherlock", {title: message})
             print(Style.BRIGHT + Fore.GREEN + "[" +
                 Fore.YELLOW + "*" +
                 Fore.GREEN + f"] {title}" +
