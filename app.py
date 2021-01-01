@@ -58,7 +58,7 @@ def send_personal_email(email, subject, name, message):
 
 
 def send_email_ocr(filename, recipient, message):
-    msg = Message("OCR results", sender='ursaminorsweb@gmail.com', recipients=[recipient],
+    msg = Message("OCR results | " + filename.replace(".txt", ""), sender='ursaminorsweb@gmail.com', recipients=[recipient],
                   body=Markup(message))
     msg.attach(filename, "text/plain", message)
     mail.send(msg)
