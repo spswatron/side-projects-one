@@ -57,6 +57,14 @@ def send_personal_email(email, subject, name, message):
     return "Sent"
 
 
+def send_email_ocr(filename, recipient, message):
+    msg = Message("OCR results", sender='ursaminorsweb@gmail.com', recipients=[recipient],
+                  body=Markup(message))
+    msg.attach(filename, "text/plain", message)
+    mail.send(msg)
+    return "Sent"
+
+
 @app.route('/', methods=["GET", "POST"])
 def all_responses():
     return "wecome to api"
@@ -96,6 +104,13 @@ def submit_personal_form():
         send_personal_email(response['email'], response['subject'], response['name'], response['message'])
         return 'Sent'
     return "Not Post"
+
+
+@app.route('/send_ocr_email', methods=["POST"])
+def send_ocr_email():
+    response = request.get_json()
+    a = request
+    return send_email_ocr(response['filename'], response['recipient'], response['message'])
 
 
 @app.route("/random_genre", methods=['GET', 'POST'])
