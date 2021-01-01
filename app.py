@@ -161,8 +161,7 @@ def ocr_upload(formData):
     else:
         result = process_image(npimg, languages, True)
 
-    result = result.replace("\n", "<br>")
-    d = "<br>"
+    d = "\n"
     result = ''.join(["<p>" + d + "</p>" for e in result.split(d) if e])
 
     emit("ocr_upload", {"ocr": result})
