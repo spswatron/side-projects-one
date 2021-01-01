@@ -126,14 +126,15 @@ def sherlock(username):
     return {"matches": results}
 
 
-def process_image(npimg, image: bool):
+def process_image(npimg, languages, image: bool):
     img = None
     if image:
         img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
     else:
         img = cv2.imread(npimg)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    result = pytesseract.image_to_string(img, config=r'--oem 3 --psm 4')
+    languages = '+'.join(languages)
+    result = pytesseract.image_to_string(img, config=r'--oem 3 --psm 4', lang=languages)
     return result
 
 
@@ -144,6 +145,7 @@ def ocr_upload(formData):
     filestr = formData['file']
     # convert string data to numpy array
     npimg = numpy.fromstring(filestr, numpy.uint8)
+    languages = formData['languages']
     result = ""
     if '.pdf' in formData['filename']:
         with tempfile.TemporaryDirectory() as path:
@@ -152,12 +154,12 @@ def ocr_upload(formData):
             emit("ocr_upload", {"stats": [i / 2, len(images)]})
             for image in images:
                 print(image.filename)
-                result += process_image(image.filename, False)
+                result += process_image(image.filename, languages, False)
                 emit("ocr_upload", {"stats": [i, len(images)]})
                 i += 1
 
     else:
-        result = process_image(npimg, True)
+        result = process_image(npimg, languages, True)
 
     result = result.replace("\n", "<br>")
     emit("ocr_upload", {"ocr": result})
