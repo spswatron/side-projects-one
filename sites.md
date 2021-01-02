@@ -270,7 +270,6 @@
 271. [interpals](https://www.interpals.net/)
 272. [irecommend](https://irecommend.ru/)
 273. [jbzd.com.pl](https://jbzd.com.pl/)
-274. [jeuxvideo](http://www.jeuxvideo.com)
 275. [kofi](https://ko-fi.com)
 276. [kwork](https://www.kwork.ru/)
 277. [labpentestit](https://lab.pentestit.ru/)

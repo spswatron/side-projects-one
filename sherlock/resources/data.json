@@ -2059,14 +2059,6 @@
     "username_claimed": "blue",
     "username_unclaimed": "noonewouldeverusethis7"
   },
-  "jeuxvideo": {
-    "errorMsg": "Vous \u00eates",
-    "errorType": "message",
-    "url": "http://www.jeuxvideo.com/profil/{}?mode=infos",
-    "urlMain": "http://www.jeuxvideo.com",
-    "username_claimed": "adam",
-    "username_unclaimed": "noonewouldeverusethis7"
-  },
   "kofi": {
     "errorType": "response_url",
     "errorUrl": "https://ko-fi.com/art?=redirect",
