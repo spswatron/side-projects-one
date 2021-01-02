@@ -7,7 +7,7 @@ from flask_mail import Mail, Message
 from flask import Flask
 from os.path import join, dirname, realpath
 from oauth2client.service_account import ServiceAccountCredentials
-from dial_sherlock import dial_sherlock, call_sherlock
+from dial_sherlock import call_sherlock
 import pytesseract
 import numpy
 import cv2

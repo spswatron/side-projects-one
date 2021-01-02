@@ -91,6 +91,7 @@ class QueryNotify():
         Nothing.
         """
 
+        emit("sherlock", {"end": "end"})
         return
 
     def __str__(self):
