@@ -13,7 +13,7 @@ import numpy
 import cv2
 from pdf2image import convert_from_bytes
 import tempfile
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO, emit
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -146,7 +146,7 @@ def process_image(npimg, languages, image: bool):
 
 @socketio.on('ocr_upload')
 def ocr_upload(formData):
-    send("ocr_upload", {"stats": [1, 50]})
+    emit("ocr_upload", {"stats": [1, 50]})
     filestr = formData['file']
     # convert string data to numpy array
     npimg = numpy.fromstring(filestr, numpy.uint8)
@@ -156,11 +156,11 @@ def ocr_upload(formData):
         with tempfile.TemporaryDirectory() as path:
             images = convert_from_bytes(npimg, output_folder=path)
             i = 1
-            send("ocr_upload", {"stats": [i / 2, len(images)]})
+            emit("ocr_upload", {"stats": [i / 2, len(images)]})
             for image in images:
                 print(image.filename)
                 result += process_image(image.filename, languages, False)
-                send("ocr_upload", {"stats": [i, len(images)]})
+                emit("ocr_upload", {"stats": [i, len(images)]})
                 i += 1
 
     else:
@@ -169,7 +169,7 @@ def ocr_upload(formData):
     d = "\n"
     result = ''.join(["<p>" + e + "</p>" for e in result.split(d) if e])
 
-    send("ocr_upload", {"ocr": result})
+    emit("ocr_upload", {"ocr": result})
 
 
 if __name__ == '__main__':
