@@ -1,6 +1,10 @@
 from subprocess import *
 import os
 
+from sherlock.notify import QueryNotifyPrint
+from sherlock.sherlock import sherlock
+from sherlock.sites import SitesInformation
+
 
 def dial_sherlock(username: str):
     python = os.path.dirname(os.path.realpath(__file__)) + "/venv" + "/bin" + "/python"
@@ -12,3 +16,14 @@ def dial_sherlock(username: str):
         modified.append({result[0]: result[1]})
     # print(modified)
     return modified
+
+
+def call_sherlock(username: str):
+    sites = SitesInformation(os.path.join(os.path.dirname(__file__), 'sherlock/resources/data.json'))
+    site_data_all = {}
+    for site in sites:
+        site_data_all[site.name] = site.information
+    return sherlock(username,
+                    site_data_all,
+                    QueryNotifyPrint(result=None))
+

@@ -7,13 +7,15 @@ from flask_mail import Mail, Message
 from flask import Flask
 from os.path import join, dirname, realpath
 from oauth2client.service_account import ServiceAccountCredentials
-from dial_sherlock import dial_sherlock
+from dial_sherlock import dial_sherlock, call_sherlock
 import pytesseract
 import numpy
 import cv2
 from pdf2image import convert_from_bytes
 import tempfile
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 
 app = Flask(__name__)
@@ -38,6 +40,11 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 socketio = SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["400 per day", "70 per hour"]
+)
 
 
 def send_email(email, subject, name, message):
@@ -113,17 +120,16 @@ def send_ocr_email():
     return send_email_ocr(response['filename'], response['recipient'], response['message'])
 
 
+@limiter.exempt
 @app.route("/random_genre", methods=['GET', 'POST'])
 def r_genre():
     return random_genre()
 
 
+@socketio.on('sherlock')
 def sherlock(username):
-    results = dial_sherlock(username)
-    for pair in results:
-        for key in pair:
-            pair[key] = pair[key].replace("\\n', ", "").replace("\\n']", "")
-    return {"matches": results}
+    results = call_sherlock(username)
+    emit("sherlock", {"end": "end"})
 
 
 def process_image(npimg, languages, image: bool):

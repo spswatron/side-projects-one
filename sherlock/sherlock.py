@@ -16,13 +16,14 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from time import monotonic
 
 import requests
+from flask_socketio import emit, send
 
 from requests_futures.sessions import FuturesSession
 from torrequest import TorRequest
-from result import QueryStatus
-from result import QueryResult
-from notify import QueryNotifyPrint
-from sites  import SitesInformation
+from .result import QueryStatus
+from .result import QueryResult
+from .notify import QueryNotifyPrint
+from .sites  import SitesInformation
 
 module_name = "Sherlock: Find Usernames Across Social Networks"
 __version__ = "0.14.0"
@@ -411,7 +412,7 @@ def sherlock(username, site_data, query_notify,
 
     # Notify caller that all queries are finished.
     query_notify.finish()
-
+    emit("sherlock", {"end": "end"})
     return results_total
 
 
