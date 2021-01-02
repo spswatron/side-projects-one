@@ -126,7 +126,7 @@ def get_response(request_future, error_type, social_network):
     return response, error_context, expection_text
 
 
-def sherlock(username, site_data, query_notify,
+def sherlock(username, site_data, finish_function, query_notify,
              tor=False, unique_tor=False,
              proxy=None, timeout=None):
     """Run Sherlock Analysis.
@@ -412,8 +412,9 @@ def sherlock(username, site_data, query_notify,
 
 
     # Notify caller that all queries are finished.
-    query_notify.finish()
-    emit("sherlock", {"end": "end"})
+    print("emitting before calling finish")
+    # emit("sherlock", {"end": "end"})
+    finish_function()
     return results_total
 
 

@@ -18,12 +18,13 @@ def dial_sherlock(username: str):
     return modified
 
 
-def call_sherlock(username: str):
+def call_sherlock(username: str, finish_function):
     sites = SitesInformation(os.path.join(os.path.dirname(__file__), 'sherlock/resources/data.json'))
     site_data_all = {}
     for site in sites:
         site_data_all[site.name] = site.information
     return sherlock(username,
                     site_data_all,
+                    finish_function,
                     QueryNotifyPrint(result=None))
 

@@ -126,10 +126,14 @@ def r_genre():
     return random_genre()
 
 
+def sherlock_finished():
+    emit("sherlock", {"end": "end"})
+
+
 @socketio.on('sherlock')
 def sherlock(username):
-    results = call_sherlock(username)
-    emit("sherlock", {"end": "end"})
+    results = call_sherlock(username, sherlock_finished)
+    return
 
 
 def process_image(npimg, languages, image: bool):
@@ -173,4 +177,4 @@ def ocr_upload(formData):
 
 
 if __name__ == '__main__':
-    socketio.run(debug=True, host='0.0.0.0')
+    socketio.run(debug=True, host='0.0.0.0', threaded=True)
