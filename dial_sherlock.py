@@ -26,5 +26,5 @@ def call_sherlock(username: str, finish_function):
     return sherlock(username,
                     site_data_all,
                     finish_function,
-                    QueryNotifyPrint(result=None))
+                    QueryNotifyPrint(result=None), tor=True)
 
