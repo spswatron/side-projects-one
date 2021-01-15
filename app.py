@@ -16,6 +16,7 @@ import tempfile
 from flask_socketio import SocketIO, emit
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from nodes_edges import create_edges, create_nodes
 
 
 app = Flask(__name__)
@@ -134,6 +135,14 @@ def sherlock_finished():
 def sherlock(username):
     results = call_sherlock(username, sherlock_finished)
     return
+
+
+@app.route('/node-edges', methods=["POST"])
+def node_edges():
+    content = request.files['content'].read().decode("utf-8")
+    nodes = create_nodes(content)
+    edges = create_edges(nodes)
+    return {"nodes": nodes, "edges": edges}
 
 
 def process_image(npimg, languages, image: bool):
