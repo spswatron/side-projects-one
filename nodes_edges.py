@@ -30,7 +30,7 @@ def create_edges(content):
     past_edges = {}
     j = 0
     finalEdgeCSV = ""
-    while j < 2000:
+    while j < node_count * 4:
         randomFrom = random.randint(1, node_count)
         randomTo = random.randint(1, node_count)
         if randomTo != randomFrom and (randomTo, randomFrom) not in past_edges:
