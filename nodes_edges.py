@@ -25,12 +25,21 @@ def create_nodes(title):
     return finalCSV
 
 
+def max_edge_count(size):
+    if size > 2:
+        return size * 4
+    elif size <= 1:
+        return 0
+    elif size == 2:
+        return 2
+
+
 def create_edges(content):
     node_count = len(content.split("\n"))
     past_edges = {}
     j = 0
     finalEdgeCSV = ""
-    while j < node_count * 4:
+    while j < max_edge_count(node_count):
         randomFrom = random.randint(1, node_count)
         randomTo = random.randint(1, node_count)
         if randomTo != randomFrom and (randomTo, randomFrom) not in past_edges:
