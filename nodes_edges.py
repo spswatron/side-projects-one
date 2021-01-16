@@ -16,7 +16,7 @@ def create_nodes(title):
     i = 1
     past_j = 0
     j = random.randint(1, 30)
-    finalCSV = ""
+    finalCSV = "Id,content\n"
     while j < len(BeeMovieList):
         finalCSV += str(i) + "," + ";".join(BeeMovieList[past_j: j]) + "\n"
         past_j = j
@@ -38,7 +38,7 @@ def create_edges(content):
     node_count = len(content.split("\n"))
     past_edges = {}
     j = 0
-    finalEdgeCSV = ""
+    finalEdgeCSV = "fromId,toId\n"
     while j < max_edge_count(node_count):
         randomFrom = random.randint(1, node_count)
         randomTo = random.randint(1, node_count)
