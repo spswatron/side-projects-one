@@ -5,7 +5,7 @@ import random
 def open_file(source):
     BeeMovie = source
     # write = open("BeeMovie.txt", "w")
-    BeeMovie = "".join(word for word in BeeMovie if word not in string.punctuation).replace("\n", " ")
+    BeeMovie = BeeMovie.replace(";", "")
     BeeMovie = " ".join(BeeMovie.split())
     BeeMovieList = BeeMovie.split(" ")
     return BeeMovieList
