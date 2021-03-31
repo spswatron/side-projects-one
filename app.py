@@ -1,7 +1,7 @@
 from PIL import Image
 from flask_mail import Message
 
-from combine_images import vertical_horizontal_combo, horizontal_combo, vertical_combo
+from combine_images import horizontal_combo, vertical_combo
 from random_genre import random_genre
 from flask import *
 import gspread

@@ -36,10 +36,10 @@ def vertical_combo(content1, content2, content3, filename):
         y_offset += im.size[1]
     new_im.save(filename)
 
-#
-# def vertical_horizontal_combo(images):
-#     with tempfile.TemporaryDirectory() as path:
-#         horizontal_combo(images[0], images[1], images[2], path + "image0.jpg")
-#         horizontal_combo(images[3], images[4], images[5], path + "image1.jpg")
-#         horizontal_combo(images[6], images[7], images[8], path + "image1.jpg")
-#         vertical_combo(path + "image0.jpg", path + "image1.jpg", path + "image2.jpg", path + "answer")
+
+def vertical_horizontal_combo(images):
+    with tempfile.TemporaryDirectory() as path:
+        horizontal_combo(images[0], images[1], images[2], path + "image0.jpg")
+        horizontal_combo(images[3], images[4], images[5], path + "image1.jpg")
+        horizontal_combo(images[6], images[7], images[8], path + "image1.jpg")
+        vertical_combo(path + "image0.jpg", path + "image1.jpg", path + "image2.jpg", path + "answer")
