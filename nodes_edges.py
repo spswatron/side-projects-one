@@ -35,7 +35,7 @@ def max_edge_count(size):
 
 
 def create_edges(content):
-    node_count = len(content.split("\n"))
+    node_count = len(content.split("\n")) - 2
     past_edges = {}
     j = 0
     finalEdgeCSV = "fromId,toId\n"

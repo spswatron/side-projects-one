@@ -1,4 +1,7 @@
+from PIL import Image
 from flask_mail import Message
+
+from combine_images import vertical_horizontal_combo, horizontal_combo, vertical_combo
 from random_genre import random_genre
 from flask import *
 import gspread
@@ -155,6 +158,19 @@ def process_image(npimg, languages, image: bool):
     languages = '+'.join(languages)
     result = pytesseract.image_to_string(img, config=r'--oem 3 --psm 4', lang=languages)
     return result
+
+
+@app.route('/combine_images', methods=["POST"])
+def combine_images():
+    images = []
+    for i in range(9):
+        images.append(Image.open(request.files["image" + str(i)]))
+    with tempfile.TemporaryDirectory() as path:
+        horizontal_combo(images[0], images[1], images[2], path + "image0.jpg")
+        horizontal_combo(images[3], images[4], images[5], path + "image1.jpg")
+        horizontal_combo(images[6], images[7], images[8], path + "image1.jpg")
+        vertical_combo(path + "image0.jpg", path + "image1.jpg", path + "image2.jpg", path + "answer.jpg")
+        return send_file(path + "answer.jpg", mimetype='image/jpg')
 
 
 @socketio.on('ocr_upload')
