@@ -6,6 +6,7 @@ def open_file(source):
     BeeMovie = source
     # write = open("BeeMovie.txt", "w")
     BeeMovie = BeeMovie.replace(";", "")
+    BeeMovie = BeeMovie.replace(",", "")
     BeeMovie = " ".join(BeeMovie.split())
     BeeMovieList = BeeMovie.split(" ")
     return BeeMovieList
