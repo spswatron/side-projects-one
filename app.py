@@ -130,6 +130,11 @@ def r_genre():
     return random_genre()
 
 
+@app.route("/jsonify", methods=['POST'])
+def jsonify():
+    return request.get_json()
+
+
 def sherlock_finished():
     emit("sherlock", {"end": "end"})
 
