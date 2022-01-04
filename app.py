@@ -20,6 +20,7 @@ from flask_socketio import SocketIO, emit
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from nodes_edges import create_edges, create_nodes
+from anagrams import solver
 
 
 app = Flask(__name__)
@@ -132,7 +133,9 @@ def r_genre():
 
 @app.route("/jsonify", methods=['POST'])
 def jsonify():
-    return request.get_json()
+    js = request.get_json()
+    print(js)
+    return js
 
 
 def sherlock_finished():
@@ -176,6 +179,11 @@ def combine_images():
         horizontal_combo(images[6], images[7], images[8], path + "image1.jpg")
         vertical_combo(path + "image0.jpg", path + "image1.jpg", path + "image2.jpg", path + "answer.jpg")
         return send_file(path + "answer.jpg", mimetype='image/jpg')
+
+
+@app.route('/anagram_solver/<word>', methods=["GET"])
+def anagram_solver(word):
+    return {"words": solver(word)}
 
 
 @socketio.on('ocr_upload')
