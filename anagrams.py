@@ -3,7 +3,9 @@ with open("./dictionary.csv", "r") as words:
 
 
 def find_possible_words(letters, curr_word, word_set, possible):
-    if curr_word in word_set and curr_word not in possible:
+    if curr_word in possible:
+        return
+    if curr_word in word_set:
         possible.add(curr_word)
     for i in range(len(letters)):
         find_possible_words(letters[:i] + letters[i + 1:], curr_word + letters[i], word_set, possible)
