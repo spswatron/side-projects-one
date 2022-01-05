@@ -54,9 +54,5 @@ def find_matches(letters):
 
 def solver(letters):
     possible = find_matches(letters)
-    print(len(possible))
-    possible = find_matches(letters)
-    print(len(possible))
-    for word in possible:
-        print(word)
+    print("RESULTS FOUND: " + str(len(possible)))
     return possible
